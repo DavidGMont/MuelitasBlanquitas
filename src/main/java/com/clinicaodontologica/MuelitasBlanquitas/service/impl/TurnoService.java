@@ -24,31 +24,39 @@ public class TurnoService implements ITurnoService {
 
     @Override
     public TurnoDto registrarTurno(Turno turno) throws BadRequestException {
-        TurnoDto turnoGuardado;
+        TurnoDto turnoDto;
         if (turno.getPaciente() == null || turno.getOdontologo() == null) {
             if (turno.getPaciente() == null && turno.getOdontologo() == null) {
-                LOGGER.error("🚨 El paciente y el odontólogo son nulos.");
-                throw new BadRequestException("El paciente y el odontólogo son nulos.");
+                LOGGER.error("🛑 El paciente solicitado y el odontólogo solicitado no están registrados en la "
+                        .concat("base de datos."));
+                throw new BadRequestException("💀 ¡Error grave! Ni el paciente y ni el odontólogo con los que quieres "
+                        .concat("agendar tu turno están registralos en nuestra base de datos, regístralos y ")
+                        .concat("vuelve de nuevo a este módulo."));
             } else if (turno.getPaciente() == null) {
-                LOGGER.error("🚨 El paciente es nulo.");
-                throw new BadRequestException("El paciente es nulo.");
+                LOGGER.error("🛑 El paciente solicitado no está registrado en la base de datos.");
+                throw new BadRequestException("🥺 El paciente al que le estás intentando agendar un turno no se "
+                        .concat("encuentra registrado en nuestra base de datos, no puedes dejar al odontólogo ")
+                        .concat("solito ¡Le daría frío!"));
             } else {
-                LOGGER.error("🚨 El odontólogo es nulo.");
-                throw new BadRequestException("El odontólogo es nulo.");
+                LOGGER.error("🛑 El odontólogo solicitado no está registrado en la base de datos.");
+                throw new BadRequestException("🥺 El odontólogo al que le estás intentando agendar un turno no se "
+                        .concat("encuentra registrado en nuestra base de datos, no puedes dejar al paciente ")
+                        .concat("solito ¡Eso no es ético y profesional!"));
             }
         } else {
-            turnoGuardado = new TurnoDto(turnoRepository.save(turno));
-            LOGGER.info("🙌 Se guardó exitosamente tu turno: {}", turnoGuardado);
+            turnoDto = new TurnoDto(turnoRepository.save(turno));
+            LOGGER.info("🎫 Se registró correctamente el turno: {}", turnoDto);
         }
-        return turnoGuardado;
+        return turnoDto;
     }
 
     @Override
     public TurnoDto buscarTurnoPorId(Long id) throws ResourceNotFoundException {
-        Turno turno = turnoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No encontrado"));
-        TurnoDto turnoConvertido = new TurnoDto(turno);
-        LOGGER.info("🔍 Turno encontrado: {}", turnoConvertido);
-        return turnoConvertido;
+        Turno turnoEncontrado = turnoRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("🛑 El turno que buscas no existe en la base de datos."));
+        TurnoDto turnoDto = new TurnoDto(turnoEncontrado);
+        LOGGER.info("🔍 Se ha encontrado el turno con ID {}: {}", id, turnoDto);
+        return turnoDto;
     }
 
     @Override
@@ -65,11 +73,12 @@ public class TurnoService implements ITurnoService {
     public TurnoDto actualizarTurno(Turno turno) throws ResourceNotFoundException, BadRequestException {
         TurnoDto turnoActualizado;
         if (!turnoRepository.existsById(turno.getId())) {
-            LOGGER.warn("🛑 Se intentó actualizar al turno con ID {}, pero no existe en la base de datos", turno.getId());
-            throw new ResourceNotFoundException("🛑 El turno que intentaste actualizar no existe en la base de datos");
+            LOGGER.error("🛑 Se intentó actualizar el turno con ID {}, pero este no existe en la base de datos.",
+                    turno.getId());
+            throw new ResourceNotFoundException("🛑 El turno que intentaste actualizar no existe en la base de datos.");
         } else {
             turnoActualizado = registrarTurno(turno);
-            LOGGER.warn("🛑 Se ha actualizado el paciente con ID {}: {}", turno.getId(), turnoActualizado);
+            LOGGER.warn("🛑 Se ha actualizado el turno con ID {}: {}", turnoActualizado.getId(), turnoActualizado);
         }
         return turnoActualizado;
     }
@@ -78,10 +87,10 @@ public class TurnoService implements ITurnoService {
     public void eliminarTurno(Long id) throws ResourceNotFoundException {
         if (turnoRepository.existsById(id)) {
             turnoRepository.deleteById(id);
-            LOGGER.warn("🚨 Se ha eliminado el turno con ID {}", id);
+            LOGGER.warn("🚨 Se ha eliminado el turno con ID {}.", id);
         } else {
-            LOGGER.warn("🛑 Se intentó eliminar al turno con ID {}, pero no existe en la base de datos", id);
-            throw new ResourceNotFoundException("🛑 El turno que intentaste eliminar no existe en la base de datos");
+            LOGGER.error("🛑 Se intentó eliminar el turno con ID {}, pero este no existe en la base de datos.", id);
+            throw new ResourceNotFoundException("🛑 El turno que intentaste eliminar no existe en la base de datos.");
         }
     }
 }

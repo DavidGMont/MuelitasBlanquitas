@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> procesarBadRequestException(BadRequestException exception) {
         Map<String, String> mensaje = new HashMap<>();
-        mensaje.put("mensaje", "🚨 Tienes un error: ".concat(exception.getMessage()));
+        mensaje.put("mensaje", exception.getMessage());
         return mensaje;
     }
 
@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> procesarResourceNotFoundException(ResourceNotFoundException exception) {
         Map<String, String> mensaje = new HashMap<>();
-        mensaje.put("mensaje", "🚨 No se pudo encontrar el recurso solicitado: ".concat(exception.getMessage()));
+        mensaje.put("mensaje", exception.getMessage());
         return mensaje;
     }
 

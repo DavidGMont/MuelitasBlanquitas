@@ -52,8 +52,7 @@ public class PacienteController {
             })
     @PostMapping
     public ResponseEntity<PacienteDto> registrarPaciente(@RequestBody @Valid Paciente paciente) {
-        PacienteDto pacienteGuardado = pacienteService.registrarPaciente(paciente);
-        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteGuardado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(pacienteService.registrarPaciente(paciente));
     }
 
     @Operation(summary = "🔍 Buscar un paciente por ID",
@@ -86,8 +85,7 @@ public class PacienteController {
             })
     @GetMapping("/{id}")
     public ResponseEntity<PacienteDto> buscarPacientePorId(@PathVariable Long id) throws ResourceNotFoundException {
-        PacienteDto pacienteEncontrado = pacienteService.buscarPacientePorId(id);
-        return ResponseEntity.ok(pacienteEncontrado);
+        return ResponseEntity.ok(pacienteService.buscarPacientePorId(id));
     }
 
     @Operation(summary = "👨‍👩‍👧‍👦 Listar todos los pacientes",
@@ -153,9 +151,9 @@ public class PacienteController {
                     )
             })
     @PutMapping
-    public ResponseEntity<PacienteDto> actualizarPaciente(@RequestBody @Valid Paciente paciente) throws ResourceNotFoundException {
-        PacienteDto pacienteEncontrado = pacienteService.actualizarPaciente(paciente);
-        return ResponseEntity.ok(pacienteEncontrado);
+    public ResponseEntity<PacienteDto> actualizarPaciente(@RequestBody @Valid Paciente paciente)
+            throws ResourceNotFoundException {
+        return ResponseEntity.ok(pacienteService.actualizarPaciente(paciente));
     }
 
     @Operation(summary = "🚮 Eliminar un paciente por ID",

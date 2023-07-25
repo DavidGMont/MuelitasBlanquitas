@@ -23,19 +23,18 @@ public class PacienteService implements IPacienteService {
 
     @Override
     public PacienteDto registrarPaciente(Paciente paciente) {
-        Paciente pacienteParaGuardar = pacienteRepository.save(paciente);
-        PacienteDto pacienteConvertido = new PacienteDto(pacienteParaGuardar);
-        LOGGER.info("🙌 Se guardó exitosamente tu paciente: {}", pacienteConvertido);
-        return pacienteConvertido;
+        PacienteDto pacienteDto = new PacienteDto(pacienteRepository.save(paciente));
+        LOGGER.info("👩 Se registró correctamente al paciente: {}", pacienteDto);
+        return pacienteDto;
     }
 
     @Override
     public PacienteDto buscarPacientePorId(Long id) throws ResourceNotFoundException {
-        Paciente pacienteEncontrado = pacienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("🛑 No encontrado"));
-        PacienteDto pacienteConvertido = new PacienteDto(pacienteEncontrado);
-        LOGGER.info("🔍 Paciente encontrado: {}", pacienteConvertido);
-        return pacienteConvertido;
+        Paciente pacienteEncontrado = pacienteRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("🛑 El paciente que buscas no existe en la base de datos."));
+        PacienteDto pacienteDto = new PacienteDto(pacienteEncontrado);
+        LOGGER.info("🔍 Se ha encontrado al paciente con ID {}: {}", id, pacienteDto);
+        return pacienteDto;
     }
 
     @Override
@@ -52,11 +51,14 @@ public class PacienteService implements IPacienteService {
     public PacienteDto actualizarPaciente(Paciente paciente) throws ResourceNotFoundException {
         PacienteDto pacienteActualizado;
         if (!pacienteRepository.existsById(paciente.getId())) {
-            LOGGER.warn("🛑 Se intentó actualizar al paciente con ID {}, pero no existe en la base de datos", paciente.getId());
-            throw new ResourceNotFoundException("🛑 El paciente que intentaste actualizar no existe en la base de datos");
+            LOGGER.error("🛑 Se intentó actualizar al paciente con ID {}, pero este no existe en la base de datos.",
+                    paciente.getId());
+            throw new ResourceNotFoundException("🛑 El paciente que intentaste actualizar no existe en la " +
+                    "base de datos.");
         } else {
             pacienteActualizado = registrarPaciente(paciente);
-            LOGGER.warn("🛑 Se ha actualizado el paciente con ID {}: {}", pacienteActualizado.getId(), pacienteActualizado);
+            LOGGER.warn("🛑 Se ha actualizado el paciente con ID {}: {}", pacienteActualizado.getId(),
+                    pacienteActualizado);
         }
         return pacienteActualizado;
     }
@@ -67,8 +69,8 @@ public class PacienteService implements IPacienteService {
             pacienteRepository.deleteById(id);
             LOGGER.warn("🚨 Se ha eliminado el paciente con ID {}", id);
         } else {
-            LOGGER.warn("🛑 Se intentó eliminar al paciente con ID {}, pero no existe en la base de datos", id);
-            throw new ResourceNotFoundException("🛑 El paciente que intentaste eliminar no existe en la base de datos");
+            LOGGER.error("🛑 Se intentó eliminar el paciente con ID {}, pero este no existe en la base de datos.", id);
+            throw new ResourceNotFoundException("🛑 El paciente que intentaste eliminar no existe en la base de datos.");
         }
     }
 }
