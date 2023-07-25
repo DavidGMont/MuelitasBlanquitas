@@ -1,6 +1,7 @@
 package com.clinicaodontologica.MuelitasBlanquitas.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -18,21 +19,27 @@ public class Turno {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Setter(value = AccessLevel.NONE)
+    @Schema(title = "ID", description = "Valor autogenerado por la base de datos.", example = "154")
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paciente_id", nullable = false)
-    @NotNull(message = "🛑 El paciente no puede ser nulo")
+    @NotNull(message = "👩 Por favor ingresa un paciente, este no puede ser nulo.")
+    @Schema(title = "Paciente", description = "La información de tu paciente.")
     private Paciente paciente;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "odontologo_id", nullable = false)
-    @NotNull(message = "🛑 El odontólogo no puede ser nulo")
+    @NotNull(message = "👨‍⚕️ Por favor ingresa un odontólogo, este no puede ser nulo.")
+    @Schema(title = "Odontólogo", description = "La información de tu odontólogo.")
     private Odontologo odontologo;
 
-    @FutureOrPresent(message = "🛑 La fecha y hora deben ser iguales o posteriores a la fecha y hora actual")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
-    @NotNull(message = "🛑 La fecha y hora no puede ser nulas")
     @NonNull
+    @NotNull(message = "🕔 Por favor ingresa una fecha y hora, esta no puede ser nula.")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
+    @FutureOrPresent(message = "🕔 La fecha y hora ingresada es inválida. Por favor ingresa una fecha y hora que " +
+            "sea igual o posterior a la fecha y hora actual.")
+    @Schema(title = "Fecha y Hora", description = "La fecha y hora en que programaste tu turno.",
+            example = "2023-06-29T13:25")
     private LocalDateTime fechaHora;
 }

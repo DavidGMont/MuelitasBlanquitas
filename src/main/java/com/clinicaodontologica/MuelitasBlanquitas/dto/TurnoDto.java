@@ -2,6 +2,7 @@ package com.clinicaodontologica.MuelitasBlanquitas.dto;
 
 import com.clinicaodontologica.MuelitasBlanquitas.entity.Turno;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -13,9 +14,17 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 public class TurnoDto {
+    @Schema(title = "ID", description = "Valor autogenerado por la base de datos.", example = "154")
     private Long id;
+
+    @Schema(title = "Paciente DTO", description = "La información de tu paciente en DTO.")
     private PacienteDto pacienteDto;
+
+    @Schema(title = "Odontólogo DTO", description = "La información de tu odontólogo en DTO.")
     private OdontologoDto odontologoDto;
+
+    @Schema(title = "Fecha y Hora", description = "La fecha y hora en que programaste tu turno.",
+            example = "2023-08-28T13:40")
     private LocalDateTime fechaHora;
 
     public TurnoDto(Turno turno) {
